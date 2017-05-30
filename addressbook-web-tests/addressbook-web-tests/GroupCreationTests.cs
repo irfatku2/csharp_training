@@ -95,7 +95,7 @@ namespace WebAddressbookTests
 
         private void OpenHomePage()
         {
-            driver.Navigate().GoToUrl(baseURL + "addressbook/group.php");
+            driver.Navigate().GoToUrl(baseURL + "addressbook/");
         }
 
         private bool IsElementPresent(By by)
