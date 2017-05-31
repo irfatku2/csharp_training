@@ -19,6 +19,10 @@ namespace WebAddressbookTests
         {
             manager.Navigator.GoToGroupsPage();
 
+            if (! IsElementPresent(By.ClassName("group")))
+            {
+                Create(new GroupData(""));
+            }
             SelectGroup(v);
             RemoveGroup();
             ReturnToGroupsPage();
@@ -29,6 +33,10 @@ namespace WebAddressbookTests
         {
             manager.Navigator.GoToGroupsPage();
 
+            if (!IsElementPresent(By.ClassName("group")))
+            {
+                Create(new GroupData(""));
+            }
             SelectGroup(v);
             InitGroupModification();
             FillGroupForm(newData);
