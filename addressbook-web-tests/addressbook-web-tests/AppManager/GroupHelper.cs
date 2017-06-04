@@ -17,26 +17,15 @@ namespace WebAddressbookTests
 
         public GroupHelper Remove(int v)
         {
-            manager.Navigator.GoToGroupsPage();
-
-            if (! IsElementPresent(By.ClassName("group")))
-            {
-                Create(new GroupData(""));
-            }
             SelectGroup(v);
             RemoveGroup();
             ReturnToGroupsPage();
             return this;
         }
 
+        
         internal GroupHelper Modify(int v, GroupData newData)
         {
-            manager.Navigator.GoToGroupsPage();
-
-            if (!IsElementPresent(By.ClassName("group")))
-            {
-                Create(new GroupData(""));
-            }
             SelectGroup(v);
             InitGroupModification();
             FillGroupForm(newData);
@@ -45,18 +34,24 @@ namespace WebAddressbookTests
             return this;
         }
 
-
-
         public GroupHelper Create(GroupData group)
         {
-            manager.Navigator.GoToGroupsPage();
-
             InitGroupCreation();
             FillGroupForm(group);
             SubmitGroupCreation();
             ReturnToGroupsPage();
             return this;
         }
+
+        public GroupHelper GroupExist()
+        {
+            if (!IsElementPresent(By.ClassName("group")))
+            {
+                Create(new GroupData(""));
+            }
+            return this;
+        }
+
 
         public GroupHelper InitGroupCreation()
         {
@@ -109,5 +104,18 @@ namespace WebAddressbookTests
             driver.FindElement(By.Name("update")).Click();
             return this;
         }
+
+        public List<GroupData> GetGroupList()
+        {
+            List<GroupData> groups = new List<GroupData>();
+            manager.Navigator.GoToGroupsPage();
+            ICollection<IWebElement> elements = driver.FindElements(By.CssSelector("span.group"));
+            foreach (IWebElement element in elements)
+            {
+                groups.Add(new GroupData (element.Text));
+            }
+            return groups;
+        }
+
     }
 }

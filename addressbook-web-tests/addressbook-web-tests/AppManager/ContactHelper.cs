@@ -27,10 +27,6 @@ namespace WebAddressbookTests
 
         public ContactHelper Modify(int v,ContactData newContact)
         {
-            if (driver.FindElement(By.Id("search_count")).Text == "0")
-            {
-                Create(new ContactData("", ""));
-            }
             SelectContact(v);
             InitContactModification();
             FillContactForm(newContact);
@@ -41,13 +37,18 @@ namespace WebAddressbookTests
 
         public ContactHelper Remove(int v)
         {
-            if(driver.FindElement(By.Id("search_count")).Text == "0")
-            {
-                Create(new ContactData("", ""));
-            }
             SelectContact(v);
             RemoveContact();
             SubmitRemoveContact();
+            return this;
+        }
+
+        public ContactHelper ContactExist()
+        {
+            if (driver.FindElement(By.Id("search_count")).Text == "0")
+            {
+                Create(new ContactData("", ""));
+            }
             return this;
         }
 
