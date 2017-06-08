@@ -100,6 +100,7 @@ namespace WebAddressbookTests
         public ContactHelper SubmitContactCreation()
         {
             driver.FindElement(By.Name("submit")).Click();
+            contactCache = null;
             return this;
         }
 
@@ -124,12 +125,14 @@ namespace WebAddressbookTests
         public ContactHelper SubmitRemoveContact()
         {
             driver.SwitchTo().Alert().Accept();
+            contactCache = null;
             return this;
         }
 
         private ContactHelper SubmitContactModification()
         {
             driver.FindElement(By.Name("update")).Click();
+            contactCache = null;
             return this;
         }
 
@@ -139,18 +142,24 @@ namespace WebAddressbookTests
             return this;
         }
 
+        private List<ContactData> contactCache = null;
+
         public List<ContactData> GetContactList()
         {
-            List<ContactData> contacts = new List<ContactData>();
-            manager.Navigator.GoToHomePage();
-            ICollection<IWebElement> contactElements = driver.FindElements(By.Name("entry"));
-            foreach (IWebElement contactElement in contactElements)
+            if(contactCache == null)
             {
-                string fn = contactElement.FindElements(By.TagName("td"))[2].Text;
-                string ln = contactElement.FindElements(By.TagName("td"))[1].Text;
-                contacts.Add(new ContactData(fn, ln));
+                contactCache = new List<ContactData>();
+                manager.Navigator.GoToHomePage();
+                ICollection<IWebElement> contactElements = driver.FindElements(By.Name("entry"));
+                foreach (IWebElement contactElement in contactElements)
+                {
+                    string fn = contactElement.FindElements(By.TagName("td"))[2].Text;
+                    string ln = contactElement.FindElements(By.TagName("td"))[1].Text;
+                    contactCache.Add(new ContactData(fn, ln));
+                }
             }
-            return contacts;
+            
+            return new List<ContactData>(contactCache);
         }
     }
 }
