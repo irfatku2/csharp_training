@@ -47,7 +47,7 @@ namespace WebAddressbookTests
         {
             if (!IsElementPresent(By.ClassName("group")))
             {
-                Create(new GroupData(""));
+                Create(new GroupData("qwe"));
             }
             return this;
         }
@@ -83,7 +83,7 @@ namespace WebAddressbookTests
 
         public GroupHelper SelectGroup(int index)
         {
-            driver.FindElement(By.XPath("(//input[@name='selected[]'])[" + index + "]")).Click();
+            driver.FindElement(By.XPath("(//input[@name='selected[]'])[" + index+1 + "]")).Click();
             return this;
         }
 

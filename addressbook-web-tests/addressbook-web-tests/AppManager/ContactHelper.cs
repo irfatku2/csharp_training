@@ -47,7 +47,7 @@ namespace WebAddressbookTests
         {
             if (driver.FindElement(By.Id("search_count")).Text == "0")
             {
-                Create(new ContactData("", ""));
+                Create(new ContactData("qwe", "qwe"));
             }
             return this;
         }
@@ -111,7 +111,7 @@ namespace WebAddressbookTests
 
         public ContactHelper SelectContact(int index)
         {
-            driver.FindElement(By.XPath("(//input[@name='selected[]'])[" + index + "]")).Click();
+            driver.FindElement(By.XPath("(//input[@name='selected[]'])[" + index+1 + "]")).Click();
             return this;
         }
 
@@ -139,6 +139,18 @@ namespace WebAddressbookTests
             return this;
         }
 
-
+        public List<ContactData> GetContactList()
+        {
+            List<ContactData> contacts = new List<ContactData>();
+            manager.Navigator.GoToHomePage();
+            ICollection<IWebElement> contactElements = driver.FindElements(By.Name("entry"));
+            foreach (IWebElement contactElement in contactElements)
+            {
+                string fn = contactElement.FindElements(By.TagName("td"))[2].Text;
+                string ln = contactElement.FindElements(By.TagName("td"))[1].Text;
+                contacts.Add(new ContactData(fn, ln));
+            }
+            return contacts;
+        }
     }
 }
