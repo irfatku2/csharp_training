@@ -156,6 +156,12 @@ namespace WebAddressbookTests
              return this;
         }
 
+        public ContactHelper GoToContactDetailes()
+        {
+            driver.FindElement(By.CssSelector("img[alt=\"Details\"]")).Click();
+            return this;
+        }
+
         public int GetNumberOfSearchResults()
         {
             manager.Navigator.GoToHomePage();
@@ -214,6 +220,23 @@ namespace WebAddressbookTests
             ContactData allContactData = GetContactInformationFromEditForm(index);
             return allContactData.Lastname + allContactData.Firstname + allContactData.Address + allContactData.AllPhones;
         }
+
+        public string GetContactInformationFromDetailedForm(int index)
+        {
+            manager.Navigator.GoToHomePage();
+            SelectContact(index);
+            GoToContactDetailes();
+
+            string cell = driver.FindElement(By.XPath("//div[@id='content']")).Text;
+            return Regex.Replace(cell, "[ \r\nHMW:()-]", "");
+        }
+
+        public string GetContactInformationFromEditFormDetailed(int index)
+        {
+            ContactData allContactData = GetContactInformationFromEditForm(index);
+            return Regex.Replace((allContactData.Firstname + allContactData.Lastname + allContactData.Address + allContactData.AllPhones),"[\r\n]","");
+        }
+
 
         private List<ContactData> contactCache = null;
 
