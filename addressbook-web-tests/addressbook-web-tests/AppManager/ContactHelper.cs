@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
-
+using System.Text.RegularExpressions;
 
 namespace WebAddressbookTests
 {
@@ -16,8 +16,10 @@ namespace WebAddressbookTests
         {
         }
 
+
         public ContactHelper Create(ContactData contact)
         {
+            manager.Navigator.GoToHomePage();
             InitContactCreation();
             FillContactForm(contact);
             SubmitContactCreation();
@@ -27,6 +29,7 @@ namespace WebAddressbookTests
 
         public ContactHelper Modify(int v,ContactData newContact)
         {
+            manager.Navigator.GoToHomePage();
             SelectContact(v);
             InitContactModification();
             FillContactForm(newContact);
@@ -35,8 +38,11 @@ namespace WebAddressbookTests
             return this;
         }
 
+
+
         public ContactHelper Remove(int v)
         {
+            manager.Navigator.GoToHomePage();
             SelectContact(v);
             RemoveContact();
             SubmitRemoveContact();
@@ -129,17 +135,84 @@ namespace WebAddressbookTests
             return this;
         }
 
-        private ContactHelper SubmitContactModification()
+        public ContactHelper SubmitContactModification()
         {
             driver.FindElement(By.Name("update")).Click();
             contactCache = null;
             return this;
         }
-
-        private ContactHelper InitContactModification()
+        /*
+        public void InitContactModification(int index)
         {
-            driver.FindElement(By.CssSelector("img[alt=\"Edit\"]")).Click();
-            return this;
+            driver.FindElements(By.Name("entry"))[index]
+                .FindElements(By.TagName("td"))[7]
+                .FindElement(By.TagName("a")).Click();
+        }
+        */
+
+        public ContactHelper InitContactModification()
+        {
+             driver.FindElement(By.CssSelector("img[alt=\"Edit\"]")).Click();
+             return this;
+        }
+
+        public int GetNumberOfSearchResults()
+        {
+            manager.Navigator.GoToHomePage();
+            string text = driver.FindElement(By.TagName("label")).Text;
+            Match m = new Regex(@"\d+").Match(text);
+            return Int32.Parse(m.Value);
+        }
+
+        public ContactData GetContactInformationFromTable(int index)
+        {
+            manager.Navigator.GoToHomePage();
+            IList<IWebElement> cells = driver.FindElements(By.Name("entry"))[index].FindElements(By.TagName("td"));
+            string lastName = cells[1].Text;
+            string firstName = cells[2].Text;
+            string address = cells[3].Text;
+            string allPhones = cells[5].Text;
+
+            return new ContactData(firstName, lastName)
+            {
+                Address = address,
+                AllPhones = allPhones
+            };
+        }
+
+        public ContactData GetContactInformationFromEditForm(int index)
+        {
+            manager.Navigator.GoToHomePage();
+            SelectContact(index);
+            InitContactModification();
+            string firstName = driver.FindElement(By.Name("firstname")).GetAttribute("value");
+            string lastName = driver.FindElement(By.Name("lastname")).GetAttribute("value");
+            string address = driver.FindElement(By.Name("address")).GetAttribute("value");
+
+            string homePhone = driver.FindElement(By.Name("home")).GetAttribute("value");
+            string mobilePhone = driver.FindElement(By.Name("mobile")).GetAttribute("value");
+            string workPhone = driver.FindElement(By.Name("work")).GetAttribute("value");
+
+            return new ContactData(firstName, lastName)
+            {
+                Address = address,
+                HomePhone = homePhone,
+                MobilePhone = mobilePhone,
+                WorkPhone = workPhone
+            };
+        }
+
+        public string GetContactInformationFromTableReverse(int index)
+        {
+            manager.Navigator.GoToHomePage();
+            string cell = driver.FindElements(By.Name("entry"))[index].Text;
+            return Regex.Replace(cell, "[ ]", "");
+        }
+
+        public string GetContactInformationFromEditFormReverse(int index)
+        {
+            ContactData allContactData = GetContactInformationFromEditForm(index);
+            return allContactData.Lastname + allContactData.Firstname + allContactData.Address + allContactData.AllPhones;
         }
 
         private List<ContactData> contactCache = null;
@@ -158,7 +231,6 @@ namespace WebAddressbookTests
                     contactCache.Add(new ContactData(fn, ln));
                 }
             }
-            
             return new List<ContactData>(contactCache);
         }
     }
