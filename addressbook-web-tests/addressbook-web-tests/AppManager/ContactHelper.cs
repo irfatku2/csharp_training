@@ -228,13 +228,30 @@ namespace WebAddressbookTests
             GoToContactDetailes();
 
             string cell = driver.FindElement(By.XPath("//div[@id='content']")).Text;
-            return Regex.Replace(cell, "[ \r\nHMW:()-]", "");
+            return cell;
         }
 
         public string GetContactInformationFromEditFormDetailed(int index)
         {
             ContactData allContactData = GetContactInformationFromEditForm(index);
-            return Regex.Replace((allContactData.Firstname + allContactData.Lastname + allContactData.Address + allContactData.AllPhones),"[\r\n]","");
+            string allContact = allContactData.Firstname + " " + allContactData.Lastname;
+            if (allContactData.Address != "")
+            {
+                allContact = allContact + "\r\n" + allContactData.Address;
+            }
+            if (allContactData.HomePhone != "")
+            {
+                allContact = allContact + "\r\n\r\nH: " + allContactData.HomePhone;
+            }
+            if (allContactData.MobilePhone != "")
+            {
+                allContact = allContact + "\r\nM: " + allContactData.MobilePhone;
+            }
+            if (allContactData.WorkPhone != "")
+            {
+                allContact = allContact + "\r\nW: " + allContactData.WorkPhone;
+            }
+            return allContact;
         }
 
 
