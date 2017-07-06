@@ -31,7 +31,7 @@ namespace WebAddressbookTests
         {
             manager.Navigator.GoToHomePage();
             SelectContact(v);
-            InitContactModification();
+            InitContactModification(v);
             FillContactForm(newContact);
             SubmitContactModification();
             ReturnToHomePage();
@@ -150,10 +150,10 @@ namespace WebAddressbookTests
         }
         */
 
-        public ContactHelper InitContactModification()
+        public ContactHelper InitContactModification(int v)
         {
-             driver.FindElement(By.CssSelector("img[alt=\"Edit\"]")).Click();
-             return this;
+            driver.FindElement(By.XPath("(//img[@alt='Edit'])[" + (v + 1) + "]")).Click();
+            return this;
         }
 
         public ContactHelper GoToContactDetailes()
@@ -190,7 +190,7 @@ namespace WebAddressbookTests
         {
             manager.Navigator.GoToHomePage();
             SelectContact(index);
-            InitContactModification();
+            InitContactModification(index);
             string firstName = driver.FindElement(By.Name("firstname")).GetAttribute("value");
             string lastName = driver.FindElement(By.Name("lastname")).GetAttribute("value");
             string address = driver.FindElement(By.Name("address")).GetAttribute("value");
