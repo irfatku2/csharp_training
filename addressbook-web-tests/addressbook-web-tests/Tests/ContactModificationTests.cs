@@ -15,18 +15,27 @@ namespace WebAddressbookTests
         {
             ContactData newContact = new ContactData("1aa", "1bb");
 
-            List<ContactData> oldContacts = app.Contacts.GetContactList();
+            List<ContactData> oldContacts = ContactData.GetAll();
+            ContactData oldContact = oldContacts[0];
 
             app.Navigator.GoToHomePage();
             app.Contacts.ContactExist();
-            app.Contacts.Modify(0, newContact);
+            app.Contacts.Modify(oldContact, newContact);
 
-            List<ContactData> newContacts = app.Contacts.GetContactList();
+            List<ContactData> newContacts = ContactData.GetAll();
             oldContacts[0].Firstname = newContact.Firstname;
             oldContacts[0].Lastname = newContact.Lastname;
             oldContacts.Sort();
             newContacts.Sort();
             Assert.AreEqual(oldContacts, newContacts);
+            foreach (ContactData contact in newContacts)
+            {
+                if (contact.Id == oldContact.Id)
+                {
+                    Assert.AreEqual(newContact.Firstname, contact.Firstname);
+                    Assert.AreEqual(newContact.Lastname, contact.Lastname);
+                }
+            }
         }
     }
 }
